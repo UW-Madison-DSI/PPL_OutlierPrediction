@@ -12,5 +12,5 @@ label="N1", title="Observations"))
 display(Plots.scatter!(dataframe."Date", dataframe."DetrendedN1", color="blue", xlabel="Date", ylabel="Concentration", 
 label="N1 (Detrended)", title="Observations"))
 
-# Wait for keyboard input
+# Wait for keyboard input to close plot window.
 readline()
