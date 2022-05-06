@@ -1,14 +1,16 @@
-using Plots, CSV, Dates
-using DataFrames: DataFrame
+include("./utilities/read-files.jl")
 
-#read data files using DataArrays
-dataframe = CSV.read("../../data/Proccesed/DetrendedCov.csv", DataFrame)
-dataframe[!,:Date] = convert.(Base.Float64,dataframe[!,:Date])
+# Read the data from a CSV file.
+dataframe = ReadDF("../../Data/Proccesed/DetrendedCov.csv")
+first(dataframe, 5)
 
-# display plot
-xs = dataframe."Date"
-ys = dataframe."DetrendedN1"
-display(Plots.scatter(xs, ys, color="black", xlabel="X", ylabel="Y", label=nothing, title="Observations"))
+# Plot the concentration data (N1 column) in red.
+display(Plots.scatter(dataframe."Date", dataframe."N1", color="red", xlabel="Date", ylabel="Concentration", 
+label="N1", title="Observations"))
 
-# wait for keyboard input
+# Plot the detrended concentration data (DetrendedN1 column) in blue.
+display(Plots.scatter!(dataframe."Date", dataframe."DetrendedN1", color="blue", xlabel="Date", ylabel="Concentration", 
+label="N1 (Detrended)", title="Observations"))
+
+# Wait for keyboard input
 readline()
