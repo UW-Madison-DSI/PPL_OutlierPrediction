@@ -26,3 +26,9 @@ function show(plot, filename)
         println("Saved plot to $filename.")
     end
 end
+
+# run in "headless" mode if remote
+if (!is_local())
+        println("Running in headless mode...");
+        ENV["GKSwstype"] = "100"
+end
