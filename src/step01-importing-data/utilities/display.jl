@@ -1,9 +1,11 @@
+using Sockets;
+
 """
 This function is used to determine if the current Julia program 
 is running on the local computer or on a remote host.
 """
 function is_local() 
-    return endswith(gethostname(), ".local")
+    return startswith(string(Sockets.getipaddr()), "192.168")
 end
 
 """
