@@ -13,7 +13,9 @@ This function is used to show a plot either in a popop window
 when running locally or saved to a file when running remotely.
 """
 function show(plot, filename)
-    if (is_local()) 
+    if (is_local())
+
+        # Open a new window to display the plot.
         display(plot)
 
         # Wait for keyboard input to close plot window.
