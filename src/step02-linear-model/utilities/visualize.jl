@@ -1,7 +1,13 @@
-function log_modulus(x)
-    return sign(x)*log1p(abs(x))
+function log_modulus(x,m=10000)
+    return sign(x)*(log(abs(x)+m)-log(m))
 end
 
+"""
+This function reads a gen trace and outputs a plot showing the data with and without a log modulus transformation
+
+# Arguments
+- 'trace::Trace' - the trace of the model we are visualizeing
+"""
 function visualize_trace(trace::Trace; title="")
     trace = serialize_trace(trace)
     #Graph points
