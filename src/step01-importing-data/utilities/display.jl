@@ -30,7 +30,7 @@ function show(plot, filename)
 end
 
 #=
-Run in 'headless' mode if remote.  This prevents various
+Run in "headless" mode if remote.  This prevents various
 plotting related error messages from being displayed when
 running on a remote server.
 =#

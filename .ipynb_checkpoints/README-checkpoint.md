@@ -1,11 +1,9 @@
 <!-- PROJECT LOGO -->
 
-Test!
-
 <br />
 <p align="center">
   <div style="width:100%; text-align:center">
-  <img src="./images/logo.png" alt="Logo" width="128" height="128">
+  <img src="./images/logo.svg" alt="Logo">
   </div>
 
   <h3 align="center">WasteWater  Outlier Detection Investigation Using PPL</h3>
@@ -43,23 +41,23 @@ This project uses the Julia programming language and the Gen probabilistic model
 ### Project Steps
 For ease of understanding, this project is broken up into a set of steps:
 
-1. Import Data
+1. [Importing Data](./src/step01-importing-data/README.md)
 
 In this step, we import our data from a file using Julia utilities such as dataframes. 
 
-2. Linear Model
+2. [Linear Model](./src/step02-linear-model/README.md)
 
 Next, we use a linear probabilistic model to fit a line through the data points along with identifying outliers.
 
-3. Linear Spline
+3. [Linear Spline](./src/step03-linear-spline/README.md)
 
 Rather than trying to approximate our data with a single line, we break the data into groups and fit a set of linear segments through the sequence of groups.
 
-4. Linear Log Spline
+4. [Linear Log Spline](./src/step04-linear-log-spline/README.md)
 
 Since our data points encompass a large range of values and because epidemic trends frequently follow exponential trends, we transform the values to a log scale and fit linear segments to the data in the logarithmic space.
 
-5. Quadratic Spline
+5. [Quadratic Spline](./src/step05-quadratic-spline/README.md)
 
 In order to overcome the limitations of using a linear model to fit varying data, we use a quadratic model instead, fitting the data to a series of quadratic spline segments.
 
@@ -100,7 +98,7 @@ The project examples are provided in two different forms (1) as Julia script fil
 
 1. Go to the desired project step
 ```sh
-cd src/Step01 - Import Data
+cd src/step01-importing-data
 ```
 
 
@@ -109,7 +107,7 @@ cd src/Step01 - Import Data
 julia step01.jl
 ``` 
 ```sh
-jupyter step01.ipynb
+jupyter notebook step01.ipynb
 ```
 
 <!-- CONTRIBUTING -->
