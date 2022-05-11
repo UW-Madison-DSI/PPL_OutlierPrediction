@@ -8,7 +8,7 @@
   <h1 align="center">Wastewater Outlier Detection Investigation Using PPL</h1>
 
   <p align="center">
-    This project investigated the use of probabilistic programming techniques to detect outliers in Covid-19 wastewater data. 
+    This project investigated the use of probabilistic programming techniques to model and detect outliers in Covid-19 wastewater data. 
   </p>
 </p>
 
