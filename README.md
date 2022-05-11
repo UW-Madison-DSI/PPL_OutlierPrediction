@@ -2,8 +2,8 @@
 
 <br />
 <p align="center">
-  <div style="width:100%; text-align:center">
-  <img src="./images/logo.svg" alt="Logo" style="width:50%; margin:auto">
+  <div align="center">
+    <img src="./images/logo.svg" alt="Logo" style="width:50%">
   </div>
 
   <h3 align="center">WasteWater Outlier Detection Investigation Using PPL</h3>
