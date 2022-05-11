@@ -5,7 +5,7 @@
     <img src="./images/logo.svg" alt="Logo" style="width:50%">
   </div>
 
-  <h1 align="center">WasteWater Outlier Detection Investigation Using PPL</h1>
+  <h1 align="center">Wastewater Outlier Detection Investigation Using PPL</h1>
 
   <p align="center">
     This project investigated the use of probabilistic programming techniques to detect outliers in Covid-19 wastewater data. 
