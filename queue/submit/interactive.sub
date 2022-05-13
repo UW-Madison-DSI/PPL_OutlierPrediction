@@ -1,0 +1,18 @@
+# Julia build job submit file
+
+universe = vanilla
+log = julia-build.$(CLUSTER).$(PROCESS).log
+
+# have job transfer a copy of precompiled Julia software
+# be sure to match the name of the version 
+# that you have downloaded to your home directory
+transfer_input_files = julia-1.7.2-linux-x86_64.tar.gz
+
++IsBuildJob = true
+requirements = (OpSysMajorVer =?= 7)
+request_cpus = 1
+request_memory = 4GB
+request_disk = 2GB
+
+queue
+
