@@ -1,4 +1,4 @@
-using  Plots, CSV
+using CSV: read
 using DataFrames: DataFrame
 
 """
@@ -12,7 +12,7 @@ Other columns are read as strings.
 function ReadDF(filePath::String)
 
     # use CSV package to load the CSV file
-    dataframe = CSV.read(filePath, DataFrame)
+    dataframe =read(filePath, DataFrame)
 
     # convert N1 column to floats
     dataframe[!,:N1] = convert.(Base.Float64,dataframe[!,:N1])
