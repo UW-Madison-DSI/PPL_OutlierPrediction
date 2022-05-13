@@ -108,15 +108,15 @@ Same type of model generater as step 3 but with the distributions changed such t
     ys
 end;
 
-#############
 
-```
+
+"""
 Extract the infomation needed to plot from the more complex Gen trace object. exp the y values so we view the data in the same from
 as the other sections
 
 #Arguments
 - 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
-```
+"""
 function serialize_trace(trace::Gen.DynamicDSLTrace)
     (xs,) = Gen.get_args(trace)
     n = length(xs)
@@ -130,15 +130,6 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
     return(FlatDict)
 end
 
-#############
-
-show(VizGenModel(Log_Linear_Spline_with_outliers),"step04_test.png")
-
-#############
-
-observations = make_constraints(log.(ys));
-
-#############
 
 
 """
@@ -171,5 +162,8 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     tr
 end;
 
+#Main
+show(VizGenModel(Log_Linear_Spline_with_outliers),"step04_test.png")
+observations = make_constraints(log.(ys));
 #Shows a gif of the MCMC working on the Waste Water data
 show(VizGenMCMC(Log_Linear_Spline_with_outliers, xs, observations, block_resimulation_update, 100),"step05.gif")

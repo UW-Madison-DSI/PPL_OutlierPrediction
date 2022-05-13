@@ -105,14 +105,13 @@ they are outliers.
     ys
 end
 
-#############
 
-```
+"""
 Extract the infomation needed to plot from the more complex Gen trace object
 
 #Arguments
 - 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
-```
+"""
 #Get seralize trace to accept function instaed of unique code for each version
 function serialize_trace(trace::Gen.DynamicDSLTrace)
     (xs,) = Gen.get_args(trace)
@@ -127,18 +126,8 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
     return(FlatDict)
 end
 
-#############
 
-#Visualize the spline model that we have created.
 
-show(VizGenModel(Linear_Spline_with_outliers),"step03_test.png")
-
-#############
-
-#Constrain the model so the output in the wastewater output
-observations = make_constraints(ys);
-
-#############
 
 """
     Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
@@ -168,5 +157,14 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     tr
 end;
 
+#Main
+
+#Visualize the spline model that we have created.
+
+show(VizGenModel(Linear_Spline_with_outliers),"step03_test.png")
+
+
+#Constrain the model so the output in the wastewater output
+observations = make_constraints(ys);
 #Shows a gif of the MCMC working on the Waste Water data
 show(VizGenMCMC(Linear_Spline_with_outliers, xs, observations,block_resimulation_update,300,RetAni=true),"step03.gif")

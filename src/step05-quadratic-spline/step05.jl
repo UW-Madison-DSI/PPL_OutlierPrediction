@@ -134,7 +134,6 @@ and some probability that  they are outliers.
     ys
 end;
 
-#############
 
 ```
 Extract the infomation needed to plot from the more complex Gen trace object.
@@ -155,16 +154,6 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
          :ys => yValCalc(xs, trace[:Buffer_y], slopes,SubSlope))
     return(FlatDict)
 end
-
-#############
-
-show(VizGenModel(Quad_spline_with_outliers),"step05_test.png")
-
-#############
-
-observations = make_constraints(ys);
-
-#############
 
 
 """
@@ -201,5 +190,10 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     tr
 end;
   
+
+#Main
+show(VizGenModel(Quad_spline_with_outliers),"step05_test.png")
+
+observations = make_constraints(ys);
 #Shows a gif of the MCMC working on the Waste Water data
 show(VizGenMCMC(Quad_spline_with_outliers, xs, observations,block_resimulation_update, 300,RetAni=true),"step05.gif")

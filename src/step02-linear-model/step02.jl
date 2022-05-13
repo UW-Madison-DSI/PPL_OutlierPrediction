@@ -1,21 +1,21 @@
 using  Gen
 using Plots
 
+include("../step01-importing-data/utilities/display.jl")
 include("../step01-importing-data/utilities/read-files.jl")
 DF = ReadDF("../../data/processed/DetrendedCov.csv")
 xs = DF.Date
 ys = DF.DetrendedN1
 include("utilities/visualize.jl")
 
-#############
 
-```
-Creates a random linear model with some probablity any given point is an outlier. The models have the from:
-    ys = slope*xs + intercept with added noise and some points being an outlier with no mean and large amount of noise
+"""
+Creates a random linear model with some probablity any given point is an outlier. The models is linear with added noise
+and some points being an outlier with no mean and large amount of noise 
 
-#Arguments
+# Arguments
 - 'xs::Vector{<:Real}' input data to be used to generate output.
-```
+"""
 @gen function Linear_regression_with_outliers(xs::Vector{<:Real})
     # First, generate the core parameters of the model. 
     #These parameters are random because we will MCMC to find what parameters have higher probability
@@ -44,14 +44,14 @@ Creates a random linear model with some probablity any given point is an outlier
 end;
 
 
-#############
 
-```
+
+"""
 Extract the infomation needed to plot from the more complex Gen trace object
 
 #Arguments
 - 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
-```
+"""
 function serialize_trace(trace::Gen.DynamicDSLTrace)
     (xs,) = Gen.get_args(trace)
     n = length(xs)
@@ -62,7 +62,7 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
          :ys => [xs[i] * trace[:slope] + trace[:intercept] for i in 1:n])
 end
 
-#############
+
 
 """
     Reads a gen trace and outputs a plot showing the data with and without a log modulus transformation
@@ -92,12 +92,6 @@ function visualize_trace(trace::Dict; title::String="")
     return DuoPlot
 end
 
-#############
-
-show(VizGenModel(Linear_regression_with_outliers),"step02_test")
-
-#############
-
 
 """
     Creates a choicemap that forces the output of the model to be the true output of the data. 
@@ -114,12 +108,11 @@ function make_constraints(ys::Vector{Float64})
     constraints
 end;
 
-#############
-
-observations = make_constraints(ys);
 
 
-#############
+
+
+
 
 
 """
@@ -170,7 +163,8 @@ function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoi
     end
 end
 
-#############
 
-
+#Main
+show(VizGenModel(Linear_regression_with_outliers),"step02_test")
+observations = make_constraints(ys);
 show(VizGenMCMC(Linear_regression_with_outliers, xs, observations,block_resimulation_update,100,RetAni=true),"step03.gif")

@@ -128,7 +128,6 @@ and some probability that  they are outliers. the quadratic curves are picked su
     ys
 end;
 
-#############
 
 ```
 Extract the infomation needed to plot from the more complex Gen trace object.
@@ -149,15 +148,8 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
     return(FlatDict)
 end
 
-#############
 
-show(VizGenModel(Quad_spline_with_outliers_smooth), "step05Smooth_test.png")
 
-#############
-
-observations = make_constraints(ys);
-
-#############
 
 """
     Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
@@ -189,9 +181,12 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     
     # Block N+2: Update the prob_outlier parameter
     (tr, _) = mh(tr, select(:prob_outlier,:OutlierDeg, :Buffer_y, :Buffer_SubSlope))
-    # Return the updated trace
+    # Return the updated trace  
     tr
 end;
 
+#Main
+show(VizGenModel(Quad_spline_with_outliers_smooth), "step05Smooth_test.png")
+observations = make_constraints(ys);
 #Shows a gif of the MCMC working on the Waste Water data
 show(VizGenMCMC(Quad_spline_with_outliers_smooth, xs, observations,block_resimulation_update, 300,RetAni=true),"step05Smooth.gif")
