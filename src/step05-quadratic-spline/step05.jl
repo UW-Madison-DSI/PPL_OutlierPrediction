@@ -2,11 +2,13 @@
 using  Gen
 using Plots
 
+include("../step01-importing-data/utilities/display.jl")
 include("../step01-importing-data/utilities/read-files.jl")
 DF = ReadDF("../../data/processed/DetrendedCov.csv")
 xs = DF.Date
 ys = DF.N1
 include("../step02-linear-model/utilities/visualize.jl")
+
 
 SubChunkSize = 50
 
@@ -118,7 +120,7 @@ function serialize_trace(trace)
     return(FlatDict)
 end
 
-VizGenModel(Quad_spline_with_outliers)
+show(VizGenModel(Quad_spline_with_outliers),"step05_test.png")
 
 
 observations = make_constraints(ys);
@@ -153,4 +155,4 @@ function block_resimulation_update(tr)
 end;
   
 
-VizGenMCMC(Quad_spline_with_outliers, xs, observations,block_resimulation_update, 300)
+show(VizGenMCMC(Quad_spline_with_outliers, xs, observations,block_resimulation_update, 300,RetAni=true),"step05.gif")

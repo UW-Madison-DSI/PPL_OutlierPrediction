@@ -1,6 +1,7 @@
 using  Gen
 using Plots
 
+include("../step01-importing-data/utilities/display.jl")
 include("../step01-importing-data/utilities/read-files.jl")
 DF = ReadDF("../../data/processed/DetrendedCov.csv")
 xs = DF.Date
@@ -109,7 +110,7 @@ function serialize_trace(trace)
     return(FlatDict)
 end
 
-VizGenModel(Quad_spline_with_outliers_smooth)
+show(VizGenModel(Quad_spline_with_outliers_smooth), "step05Smooth_test.png")
 
 observations = make_constraints(ys);
 
@@ -143,4 +144,4 @@ function block_resimulation_update(tr)
 end;
 
 
-VizGenMCMC(Quad_spline_with_outliers_smooth, xs, observations,block_resimulation_update, 300)
+show(VizGenMCMC(Quad_spline_with_outliers_smooth, xs, observations,block_resimulation_update, 300,RetAni=true),"step05Smooth.gif")

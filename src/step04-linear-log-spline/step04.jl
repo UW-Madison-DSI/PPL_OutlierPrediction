@@ -1,6 +1,7 @@
 using  Gen
 using Plots
 
+include("../step01-importing-data/utilities/display.jl")
 include("../step01-importing-data/utilities/read-files.jl")
 DF = ReadDF("../../data/processed/DetrendedCov.csv")
 xs = DF.Date
@@ -95,9 +96,34 @@ function serialize_trace(trace)
     return(FlatDict)
 end
 
-VizGenModel(Log_Linear_Spline_with_outliers)
+show(VizGenModel(Log_Linear_Spline_with_outliers),"step04_test.png")
 
 observations = make_constraints(log.(ys));
 
+# Perform a single block resimulation update of a trace.
+function block_resimulation_update(tr)
+    (xs,) = get_args(tr)
+    n = length(xs)
+    NumChunks = div(n, SubChunkSize, RoundUp)
 
-VizGenMCMC(Log_Linear_Spline_with_outliers, xs, observations, block_resimulation_update, 100)
+    for j=1:(NumChunks)
+        # Block 1: Update the line's parameters
+        line_params = select((:noise,j-1), (:slope,j-1),
+                    (:noise,j), (:slope,j),
+                    (:noise,j+1), (:slope,j+1) )
+        (tr, _) = mh(tr, line_params)
+    end
+    
+    # Blocks 2-N+1: Update the outlier classifications
+    for i=1:n
+        (tr, _) = mh(tr, select(:data => i => :is_outlier))
+    end
+    
+    (tr, _) = mh(tr, select(:prob_outlier, :OutlierDeg, :Buffer_y))
+    
+    # Return the updated trace
+    tr
+end;
+
+
+show(VizGenMCMC(Log_Linear_Spline_with_outliers, xs, observations, block_resimulation_update, 100),"step05.gif")

@@ -1,10 +1,7 @@
-"""
-This block of code loads the jl files and extracts the xs, ys from appropriate columns of data
-"""
-
 using  Gen
 using Plots
 
+include("../step01-importing-data/utilities/display.jl")
 include("../step01-importing-data/utilities/read-files.jl")
 DF = ReadDF("../../data/processed/DetrendedCov.csv")
 xs = DF.Date
@@ -111,17 +108,16 @@ function serialize_trace(trace)
     return(FlatDict)
 end
 
-"""
-Visualize the spline model that we have created.
-"""
-VizGenModel(Linear_Spline_with_outliers)
+
+#Visualize the spline model that we have created.
+
+show(VizGenModel(Linear_Spline_with_outliers),"step03_test.png")
 
 """
 This assigns the necessary dictionary information into variable named observations. It correctly loads the csv file data.
 """
 observations = make_constraints(ys);
 
-"""
-This is visualizing our csv data with the model that we created.
-"""
-VizGenMCMC(Linear_Spline_with_outliers, xs, observations,block_resimulation_update,300)
+
+#This is visualizing our csv data with the model that we created.
+show(VizGenMCMC(Linear_Spline_with_outliers, xs, observations,block_resimulation_update,300,RetAni=true),"step03.gif")
