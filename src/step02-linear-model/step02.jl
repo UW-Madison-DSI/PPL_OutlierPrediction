@@ -7,6 +7,7 @@ xs = DF.Date
 ys = DF.DetrendedN1
 include("utilities/visualize.jl")
 
+#############
 
 ```
 Creates a random linear model with some probablity any given point is an outlier. The models have the from:
@@ -43,7 +44,15 @@ Creates a random linear model with some probablity any given point is an outlier
 end;
 
 
-function serialize_trace(trace)
+#############
+
+```
+Extract the infomation needed to plot from the more complex Gen trace object
+
+#Arguments
+- 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
+```
+function serialize_trace(trace::Gen.DynamicDSLTrace)
     (xs,) = Gen.get_args(trace)
     n = length(xs)
     Dict(
@@ -53,9 +62,16 @@ function serialize_trace(trace)
          :ys => [xs[i] * trace[:slope] + trace[:intercept] for i in 1:n])
 end
 
+#############
 
+"""
+    Reads a gen trace and outputs a plot showing the data with and without a log modulus transformation
 
-function visualize_trace(trace::Dict; title="")
+# Arguments
+- 'trace::Dict' - Dict containing the x values, the point y values, whether the data was flaged an outlier, and the model y values
+- 'title::String' - Title of plot
+"""
+function visualize_trace(trace::Dict; title::String="")
 
     #Graph points
     outliers = [pt for (pt, outlier) in zip(trace[:points], trace[:outliers]) if outlier]
@@ -72,20 +88,24 @@ function visualize_trace(trace::Dict; title="")
     scatter!(map(first, outliers), log_modulus.(map(last, outliers)), markercolor="red", label=nothing)
     ExpPLT = plot!(trace[:xs], log_modulus.(trace[:ys]), color = "black", lw = 3, label = nothing)
     
-    DuoPlot = plot(PLT,ExpPLT,title=title)
+    DuoPlot = plot(PLT,ExpPLT, plot_title = title)
     return DuoPlot
 end
 
-
-function VizGenModel(GenFunction::DynamicDSLFunction)
-    ts = collect(range(1, stop=400, length=400))#create equaly spaced input values, simmilar in shape to the ones we use
-    traces = simulate(GenFunction, (ts,));#Creating model with no constraints on parameters
-    visualize_trace(serialize_trace(traces))
-end
+#############
 
 show(VizGenModel(Linear_regression_with_outliers),"step02_test")
 
+#############
 
+
+"""
+    Creates a choicemap that forces the output of the model to be the true output of the data. 
+    This is used to find the conditional probability that any model leads to this outcome
+
+# Arguments
+- 'ys::Vector{Float64}' - The output of the signal we are messuring
+"""
 function make_constraints(ys::Vector{Float64})
     constraints = Gen.choicemap()
     for i=1:length(ys)
@@ -94,11 +114,21 @@ function make_constraints(ys::Vector{Float64})
     constraints
 end;
 
+#############
+
 observations = make_constraints(ys);
 
 
-# Perform a single block resimulation update of a trace.
-function block_resimulation_update(tr)
+#############
+
+
+"""
+    Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
+
+# Arguments
+- 'tr::Gen.DynamicDSLTrace' - The model trace containing the parameters that we update
+"""
+function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     # Block 1: Update the line's parameters
     line_params = select(:noise, :slope, :intercept)
     (tr, _) = mh(tr, line_params)
@@ -117,12 +147,30 @@ function block_resimulation_update(tr)
     tr
 end;
 
-function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64)
+"""
+    Creates a GIF of the model MCMC permutation on the data
+
+# Arguments
+- 'GenFunction::DynamicDSLFunction' - @Gen model function with random parameters
+- 'xs,observations::DynamicChoiceMap' - contstraints on the model. Forces the output to equal the real messurements
+- 'updateTrace::Function' - A function oh how to MCMC chunk update the code
+- 'NumFrame::Int64' - The number of frames to render
+- 'RetAni' - used to return the animation object instead of the gif
+"""
+function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64; RetAni::Bool=false)
     t, = generate(GenFunction, (xs,), observations)#Create initial set of parameters to iterate on
     viz = @animate for i in 1:NumFrame
         t = updateTrace(t)
         visualize_trace(serialize_trace(t); title="Iteration $i/$NumFrame")
     end;
-    gif(viz)
+    if(RetAni)
+        return(viz)
+    else
+        return(gif(viz))
+    end
 end
+
+#############
+
+
 show(VizGenMCMC(Linear_regression_with_outliers, xs, observations,block_resimulation_update,100,RetAni=true),"step03.gif")

@@ -8,16 +8,25 @@ xs = DF.Date
 ys = DF.N1
 include("../step02-linear-model/utilities/visualize.jl")
 
-"""
-This function divides subchunks into 35 data points.
-"""
 SubChunkSize = 35#Number of points per chunk
-function DiffrenceIndex(i::Int)#helper function to find out what chunk a point is in
-    return(div(i,SubChunkSize,RoundUp))
+"""
+    calculate what chunk point i is in.
+    #Arguments
+- 'i::Int' - index of input we want to find the associated chunk of
+-  `chunkSize` - The size of the chunks.
+"""
+function DiffrenceIndex(i::Int; chunkSize = SubChunkSize)#helper function to find out what chunk a point is in
+    return(div(i,chunkSize,RoundUp))
 end
 
 """
-This function calculates the slope and model for the linear spline model.
+Calculate the y value the model generates before noise or outliers are added. Each chunk has its own slope and has a y intercept defined
+such that each chunk edge matchs.
+
+    #Arguments
+- `xs::Vector{Float64}` - The input vector that we are generating based on
+- `Buffer_y::Float64` - The initial y intercept of that model
+- `Slopes::Vector{Float64}` - The slopes of each chunk
 """
 function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64})
     n = length(xs)
@@ -38,8 +47,13 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
     ys = [TrueDeltaMu[i] + ysOfseted[DiffrenceIndex(i)] for i=1:n]
 end
 
+
 """
-This function defines the parameters like the outlier, slope, noise. It models linear spline model with the parameters defined.
+CreCreates a random model where the data is broken into chunks and a Linear line is fit on the data with noise and some probability that 
+they are outliers.
+
+    #Arguments
+- `xs::Vector{Float64}` - The input vector that we are generating based on
 """
 @gen function Linear_Spline_with_outliers(xs::Vector{<:Real})
     #First we calculate some useful values needed for the list comprehension in the next steps
@@ -91,11 +105,16 @@ This function defines the parameters like the outlier, slope, noise. It models l
     ys
 end
 
-"""
-This function defines the necessary dictionary for plotting our data and the spline model.
-"""
+#############
+
+```
+Extract the infomation needed to plot from the more complex Gen trace object
+
+#Arguments
+- 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
+```
 #Get seralize trace to accept function instaed of unique code for each version
-function serialize_trace(trace)
+function serialize_trace(trace::Gen.DynamicDSLTrace)
     (xs,) = Gen.get_args(trace)
     n = length(xs)
     NumChunks = div(n, SubChunkSize, RoundUp)
@@ -108,16 +127,46 @@ function serialize_trace(trace)
     return(FlatDict)
 end
 
+#############
 
 #Visualize the spline model that we have created.
 
 show(VizGenModel(Linear_Spline_with_outliers),"step03_test.png")
 
-"""
-This assigns the necessary dictionary information into variable named observations. It correctly loads the csv file data.
-"""
+#############
+
+#Constrain the model so the output in the wastewater output
 observations = make_constraints(ys);
 
+#############
 
-#This is visualizing our csv data with the model that we created.
+"""
+    Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
+
+# Arguments
+- 'tr::Gen.DynamicDSLTrace' - The model trace containing the parameters that we update
+"""
+function block_resimulation_update(tr::Gen.DynamicDSLTrace)
+    (xs,) = get_args(tr)
+    n = length(xs)
+    NumChunks = div(n, SubChunkSize, RoundUp)
+    for j=1:NumChunks
+        # Block 1: Update the line's parameters
+        line_params = select((:noise,j), (:slope,j))
+        (tr, _) = mh(tr, line_params)
+    end
+    
+    # Blocks 2-N+1: Update the outlier classifications
+    for i=1:n
+        (tr, _) = mh(tr, select(:data => i => :is_outlier))
+    end
+    
+    # Block N+2: Update the prob_outlier parameter
+    (tr, _) = mh(tr, select(:prob_outlier, :Buffer_y, :OutlierDeg))
+    
+    # Return the updated trace
+    tr
+end;
+
+#Shows a gif of the MCMC working on the Waste Water data
 show(VizGenMCMC(Linear_Spline_with_outliers, xs, observations,block_resimulation_update,300,RetAni=true),"step03.gif")

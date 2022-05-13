@@ -9,13 +9,38 @@ ys = DF.N1
 include("../step02-linear-model/utilities/visualize.jl")
 
 SubChunkSize = 50
-function DiffrenceIndex(i)
-    return(div(i,SubChunkSize,RoundUp))
-end
-function SubXDif(xs,i)
-    return(xs[i] - xs[div(i-1,SubChunkSize,RoundDown)*SubChunkSize+1])
+
+"""
+    calculate what chunk point i is in.
+    #Arguments
+- 'i::Int' - index of input we want to find the associated chunk of
+-  `chunkSize` - The size of the chunks.
+"""
+function DiffrenceIndex(i::Int; chunkSize = SubChunkSize)#helper function to find out what chunk a point is in
+    return(div(i,chunkSize,RoundUp))
 end
 
+"""
+    calculate the delta x from the start of each chunk
+    #Arguments
+- 'i::Int' - index of input we want to find the associated chunk of
+-  `chunkSize` - The size of the chunks.
+"""
+function SubXDif(xs,i; chunkSize = SubChunkSize)
+    return(xs[i] - xs[div(i-1,chunkSize,RoundDown)*chunkSize+1])
+end
+
+
+"""
+Calculate the y value the model generates before noise or outliers are added. Each chunk has its own quadratic term and 
+a y intercept and linear picked so each chunk connects and first derivatives are equal
+
+    #Arguments
+- `xs::Vector{Float64}` - The input vector that we are generating based on
+- `Buffer_y::Float64` - The initial y intercept of that model
+- `Slopes::Vector{Float64}` - The quadratic term of each chunk
+- `Buffer_SubSlope::Float64` - the initial linear term of the model
+"""
 function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64}, Buffer_SubSlope::Float64)
     n = length(xs)
     NumChunks = DiffrenceIndex(n)
@@ -39,6 +64,13 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
     ys = [TrueDeltaMu[i] + ysOfseted[DiffrenceIndex(i)] for i=1:n]
 end
 
+"""
+Creates a random model where the data is broken into chunks and a quadratic curve is fit on the data with noise 
+and some probability that  they are outliers. the quadratic curves are picked such that they form a smooth line
+
+    #Arguments
+- `xs::Vector{Float64}` - The input vector that we are generating based on
+"""
 @gen function Quad_spline_with_outliers_smooth(xs::Vector{<:Real})
     # First, we get some numbers and functions needed for the rest of the analysis
     n = length(xs)
@@ -96,8 +128,15 @@ end
     ys
 end;
 
-#Get seralize trace to accept function instaed of unique code for each version
-function serialize_trace(trace)
+#############
+
+```
+Extract the infomation needed to plot from the more complex Gen trace object.
+
+#Arguments
+- 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
+```
+function serialize_trace(trace::Gen.DynamicDSLTrace)
     (xs,) = Gen.get_args(trace)
     n = length(xs)
     NumChunks = div(n, SubChunkSize, RoundUp)
@@ -110,12 +149,23 @@ function serialize_trace(trace)
     return(FlatDict)
 end
 
+#############
+
 show(VizGenModel(Quad_spline_with_outliers_smooth), "step05Smooth_test.png")
+
+#############
 
 observations = make_constraints(ys);
 
-# Perform a single block resimulation update of a trace.
-function block_resimulation_update(tr)
+#############
+
+"""
+    Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
+
+# Arguments
+- 'tr::Gen.DynamicDSLTrace' - The model trace containing the parameters that we update
+"""
+function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     (xs,) = get_args(tr)
     n = length(xs)
     NumChunks = div(n, SubChunkSize, RoundUp)
@@ -143,5 +193,5 @@ function block_resimulation_update(tr)
     tr
 end;
 
-
+#Shows a gif of the MCMC working on the Waste Water data
 show(VizGenMCMC(Quad_spline_with_outliers_smooth, xs, observations,block_resimulation_update, 300,RetAni=true),"step05Smooth.gif")
