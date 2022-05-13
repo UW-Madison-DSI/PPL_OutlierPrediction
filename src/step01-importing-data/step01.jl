@@ -1,3 +1,5 @@
+using Plots
+
 include("./utilities/read-files.jl")
 include("./utilities/display.jl")
 
