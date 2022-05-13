@@ -1,3 +1,7 @@
+"""
+This block of code loads the jl files and extracts the xs, ys from appropriate columns of data
+"""
+
 using  Gen
 using Plots
 
@@ -7,11 +11,17 @@ xs = DF.Date
 ys = DF.N1
 include("../step02-linear-model/utilities/visualize.jl")
 
+"""
+This function divides subchunks into 35 data points.
+"""
 SubChunkSize = 35#Number of points per chunk
 function DiffrenceIndex(i::Int)#helper function to find out what chunk a point is in
     return(div(i,SubChunkSize,RoundUp))
 end
 
+"""
+This function calculates the slope and model for the linear spline model.
+"""
 function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64})
     n = length(xs)
     NumChunks = DiffrenceIndex(n)
@@ -31,6 +41,9 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
     ys = [TrueDeltaMu[i] + ysOfseted[DiffrenceIndex(i)] for i=1:n]
 end
 
+"""
+This function defines the parameters like the outlier, slope, noise. It models linear spline model with the parameters defined.
+"""
 @gen function Linear_Spline_with_outliers(xs::Vector{<:Real})
     #First we calculate some useful values needed for the list comprehension in the next steps
     n = length(xs)
@@ -81,6 +94,9 @@ end
     ys
 end
 
+"""
+This function defines the necessary dictionary for plotting our data and the spline model.
+"""
 #Get seralize trace to accept function instaed of unique code for each version
 function serialize_trace(trace)
     (xs,) = Gen.get_args(trace)
@@ -95,8 +111,17 @@ function serialize_trace(trace)
     return(FlatDict)
 end
 
+"""
+Visualize the spline model that we have created.
+"""
 VizGenModel(Linear_Spline_with_outliers)
 
+"""
+This assigns the necessary dictionary information into variable named observations. It correctly loads the csv file data.
+"""
 observations = make_constraints(ys);
 
+"""
+This is visualizing our csv data with the model that we created.
+"""
 VizGenMCMC(Linear_Spline_with_outliers, xs, observations,block_resimulation_update,300)
