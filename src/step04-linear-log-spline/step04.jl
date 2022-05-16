@@ -49,6 +49,7 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
     ys = [TrueDeltaMu[i] + ysOfseted[DiffrenceIndex(i)] for i=1:n]
 end
 
+
 """
 CreCreates a random model where the data is broken into chunks and a Linear line is fit on the data with noise and some probability that 
 they are outliers.
@@ -109,7 +110,6 @@ Same type of model generater as step 3 but with the distributions changed such t
 end;
 
 
-
 """
 Extract the infomation needed to plot from the more complex Gen trace object. exp the y values so we view the data in the same from
 as the other sections
@@ -129,7 +129,6 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
          :ys => exp.(yValCalc(xs, trace[:Buffer_y], slopes)))
     return(FlatDict)
 end
-
 
 
 """
@@ -162,6 +161,7 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     tr
 end;
 
+    
 #Main
 show(VizGenModel(Log_Linear_Spline_with_outliers),"step04_test.png")
 observations = make_constraints(log.(ys));
