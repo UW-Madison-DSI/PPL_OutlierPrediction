@@ -43,9 +43,7 @@ and some points being an outlier with no mean and large amount of noise
     ys
 end;
 
-
-
-
+    
 """
 Extract the infomation needed to plot from the more complex Gen trace object
 
@@ -62,8 +60,7 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
          :ys => [xs[i] * trace[:slope] + trace[:intercept] for i in 1:n])
 end
 
-
-
+    
 """
     Reads a gen trace and outputs a plot showing the data with and without a log modulus transformation
 
@@ -92,7 +89,7 @@ function visualize_trace(trace::Dict; title::String="")
     return DuoPlot
 end
 
-
+    
 """
     Creates a choicemap that forces the output of the model to be the true output of the data. 
     This is used to find the conditional probability that any model leads to this outcome
@@ -108,13 +105,7 @@ function make_constraints(ys::Vector{Float64})
     constraints
 end;
 
-
-
-
-
-
-
-
+    
 """
     Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
 
@@ -140,6 +131,7 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     tr
 end;
 
+        
 """
     Creates a GIF of the model MCMC permutation on the data
 
@@ -163,7 +155,7 @@ function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoi
     end
 end
 
-
+        
 #Main
 show(VizGenModel(Linear_regression_with_outliers),"step02_test")
 observations = make_constraints(ys);
