@@ -32,6 +32,7 @@ function SubXDif(xs,i; chunkSize = SubChunkSize)
     return(xs[i] - xs[div(i-1,chunkSize,RoundDown)*chunkSize+1])
 end
 
+
 """
 Calculate the y value the model generates before noise or outliers are added. Each chunk has its own quadratic and linear term and 
 a y intercept picked so each chunk connects
@@ -61,6 +62,7 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
 
     ys = [TrueDeltaMu[i] + ysOfseted[DiffrenceIndex(i)] for i=1:n]
 end
+
 
 """
 Creates a random model where the data is broken into chunks and a quadratic curve is fit on the data with noise 
