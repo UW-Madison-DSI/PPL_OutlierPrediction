@@ -5,7 +5,7 @@
 |                                                                              |
 |==============================================================================|
 |                                                                              |
-|        This step generates and displays a quadratic segmented model          |
+|        This step generates and displays a segmented quadratic model          |
 |        with smoothing between the segments.                                  |
 |                                                                              |
 |        Author(s): Steve Goldstein, Marlin Lee, Wansoo Cho,                   |
@@ -35,7 +35,7 @@ SubChunkSize = 50
     Calculate what chunk point i is in.
 
     # Arguments
-- 'i::Int' - index of input we want to find the associated chunk of
+- 'i::Int' - index of input we want to find the associated chunk of.
 -  `chunkSize` - The size of the chunks.
 """
 function DiffrenceIndex(i::Int; chunkSize = SubChunkSize)#helper function to find out what chunk a point is in
@@ -47,7 +47,7 @@ end
     Calculate the delta x from the start of each chunk.
 
     # Arguments
-- 'i::Int' - index of input we want to find the associated chunk of
+- 'i::Int' - index of input we want to find the associated chunk of.
 -  `chunkSize` - The size of the chunks.
 """
 function SubXDif(xs,i; chunkSize = SubChunkSize)
@@ -76,7 +76,7 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
     TrueDeltaMu = [Slopes[DiffrenceIndex(i)]*SubXDif(xs,i)^2 + SubSlope[DiffrenceIndex(i)]*SubXDif(xs,i) for i=1:n]
 
     # Calculating the 'y intercept' of each chunk to make sure each line connects to the last one.
-    # Because each intercept gets added to the last one we take the cumalitive sum to get the total ofset needed at each step.
+    # Because each intercept gets added to the last one we take the cumalitive sum to get the total offset needed at each step.
     # The first value should be the initial ofset Buffer_y to get everything aligned
     # ysOfseted = [Buffer_y, Slope[chunk](x[chunk]- x[Last chunk])]
     ysOfseted = cumsum(pushfirst!([TrueDeltaMu[(i)*SubChunkSize] - TrueDeltaMu[(i-1)*SubChunkSize+1] for i=1:(NumChunks-1)],Buffer_y))
@@ -103,11 +103,11 @@ end
 
     # Unique to process
 
-    #Where the series starts. In the log model this is around 12 and I give it a pretty big window
+    # Where the series starts. In the log model this is around 12 and I give it a pretty big window.
     Buffer_y ~ normal(1000, 10000) 
     Buffer_SubSlope ~ normal(0, 200)
 
-    # The probability any given point is a outlier
+    # The probability any given point is a outlier.
     prob_outlier ~ uniform(.05, .1)
     
     # The scaling factor on outliers:
@@ -115,10 +115,10 @@ end
     
     # Unique to chunk
 
-    # The data apears to have no slope over 3 so a sd of 2 should capture the true slopes with high probability
+    # The data apears to have no slope over 3 so a sd of 2 should capture the true slopes with high probability.
     Slopes = [{(:slope, i)} ~ normal(0, 200) for i=1:NumChunks]
 
-    # The distribution of the noise. It gets fed into the sd of a normal distribution so the distribution of the noise needs to be always positive
+    # The distribution of the noise. It gets fed into the sd of a normal distribution so the distribution of the noise needs to be always positive.
     noise = [{(:noise, i)} ~ gamma(200, 200) for i=1:NumChunks]
 
     # EveryPoint
@@ -126,8 +126,8 @@ end
     # Is using the prob_outlier vector above to decide if each point is an outlier. the model we are using now has the slope and sd $OutlierDeg times larger then the non outliers. so we times the mu and sd by this value in the last step.
     PointOutlier = ((OutlierDeg-1)*[{:data => i => :is_outlier} ~ bernoulli(prob_outlier) for i=1:n] .+ 1)
 
-    # The random var fit to the actual data. It is created as a combination of previous parts
-    # The process was discribed in previous steps
+    # The random var fit to the actual data. It is created as a combination of previous parts.
+    # The process was described in previous steps.
     # ys = normal(mu, sd)
 
     TrueVec = yValCalc(xs,Buffer_y,Slopes,Buffer_SubSlope)
@@ -145,7 +145,7 @@ end;
     Extract the infomation needed to plot from the more complex Gen trace object.
 
     # Arguments
-- 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
+- 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model.
 """
 function serialize_trace(trace::Gen.DynamicDSLTrace)
     (xs,) = Gen.get_args(trace)
@@ -162,10 +162,10 @@ end
 
 
 """
-    Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
+    Perform a MCMC update of the Gen model updating. Updates the global parameters.
 
     # Arguments
-- 'tr::Gen.DynamicDSLTrace' - The model trace containing the parameters that we update
+- 'tr::Gen.DynamicDSLTrace' - The model trace containing the parameters that we update.
 """
 function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     (xs,) = get_args(tr)
@@ -199,6 +199,6 @@ end;
 # Main
 show(VizGenModel(Quad_spline_with_outliers_smooth), "step05Smooth_test.png")
 
-# Shows a gif of the MCMC working on the Waste Water data
+# Shows a gif of the MCMC working on the Waste Water data.
 observations = make_constraints(ys);
 show(VizGenMCMC(Quad_spline_with_outliers_smooth, xs, observations,block_resimulation_update, 300,RetAni=true),"step05Smooth.gif")

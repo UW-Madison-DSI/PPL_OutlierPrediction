@@ -4,7 +4,7 @@
 |                                                                              |
 |==============================================================================|
 |                                                                              |
-|        This step generates and displays a quadratic segmented model          |
+|        This step generates and displays a segmented quadratic model          |
 |        with no smoothing between the segments.                               |
 |                                                                              |
 |        Author(s): Steve Goldstein, Marlin Lee, Wansoo Cho,                   |
@@ -67,11 +67,11 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
     n = length(xs)
     NumChunks = DiffrenceIndex(n)
 
-    # Calculates the change of y from the previous chunk to the current x. We combine this with a set of y offset values in the next step to get the true mu fed into the normal distribution
+    # Calculate the change of y from the previous chunk to the current x. We combine this with a set of y offset values in the next step to get the true mu fed into the normal distribution
     # TrueDeltaMu n = Slope[chunk](x[i]- x[Last chunk])
     TrueDeltaMu = [Slopes[DiffrenceIndex(i)]*SubXDif(xs,i)^2 + SubSlope[DiffrenceIndex(i)]*SubXDif(xs,i) for i=1:n]
 
-    # Calculating the 'y intercept' of each chunk to make sure each line connects to the last one.
+    # Calculate the 'y intercept' of each chunk to make sure each line connects to the last one.
     # Because each intercept gets added to the last one we take the cumalitive sum to get the total offset needed at each step.
     # The first value should be the initial ofset Buffer_y to get everything aligned.
     # ysOfseted = [Buffer_y, Slope[chunk](x[chunk]- x[Last chunk])]
@@ -82,7 +82,7 @@ end
 
 
 """
-    Creates a random model where the data is broken into chunks and a quadratic curve is fit on the data with noise and some probability that  they are outliers.
+    Create a random model where the data is broken into chunks and a quadratic curve is fit on the data with noise and some probability that  they are outliers.
 
     # Arguments
 - `xs::Vector{Float64}` - The input vector that we are generating based on.
@@ -168,10 +168,10 @@ end
 
 
 """
-    Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
+    Perform a MCMC update of the Gen model updating. Updates the global parameters.
 
     # Arguments
-- 'tr::Gen.DynamicDSLTrace' - The model trace containing the parameters that we update
+- 'tr::Gen.DynamicDSLTrace' - The model trace containing the parameters that we update.
 """
 function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     (xs,) = get_args(tr)
