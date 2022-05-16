@@ -1,3 +1,21 @@
+#===============================================================================
+|                                                                              |
+|                                   step01.jl                                  |
+|                                                                              |
+|==============================================================================|
+|                                                                              |
+|        This step reads in and displays the covid wastewater data.            |
+|                                                                              |
+|        Author(s): Steve Goldstein, Marlin Lee, Wansoo Cho,                   |
+|                   AbeMegahed                                                 |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|==============================================================================|
+|     Copyright (C) 2022, Data Science Institute, University of Wisconsin      |
+|==============================================================================#
+
 using Plots
 include("./utilities/read-files.jl")
 include("./utilities/display.jl")

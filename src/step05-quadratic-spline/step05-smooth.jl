@@ -1,4 +1,24 @@
-using  Gen
+
+#===============================================================================
+|                                                                              |
+|                               step05-smooth.jl                               |
+|                                                                              |
+|==============================================================================|
+|                                                                              |
+|        This step generates and displays a quadratic segmented model          |
+|        with smoothing between the segments.                                  |
+|                                                                              |
+|        Author(s): Steve Goldstein, Marlin Lee, Wansoo Cho,                   |
+|                   AbeMegahed                                                 |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|==============================================================================|
+|     Copyright (C) 2022, Data Science Institute, University of Wisconsin      |
+|==============================================================================#
+
+using Gen
 using Plots
 
 include("../step01-importing-data/utilities/display.jl")

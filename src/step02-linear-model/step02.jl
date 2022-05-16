@@ -1,3 +1,21 @@
+#===============================================================================
+|                                                                              |
+|                                   step02.jl                                  |
+|                                                                              |
+|==============================================================================|
+|                                                                              |
+|        This step generates and displays a simple linear model.               |
+|                                                                              |
+|        Author(s): Steve Goldstein, Marlin Lee, Wansoo Cho,                   |
+|                   AbeMegahed                                                 |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|==============================================================================|
+|     Copyright (C) 2022, Data Science Institute, University of Wisconsin      |
+|==============================================================================#
+
 using  Gen
 using Plots
 
@@ -43,7 +61,7 @@ and some points being an outlier with no mean and large amount of noise
     ys
 end;
 
-    
+
 """
 Extract the infomation needed to plot from the more complex Gen trace object
 
@@ -60,7 +78,7 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
          :ys => [xs[i] * trace[:slope] + trace[:intercept] for i in 1:n])
 end
 
-    
+
 """
     Reads a gen trace and outputs a plot showing the data with and without a log modulus transformation
 
@@ -70,17 +88,16 @@ end
 """
 function visualize_trace(trace::Dict; title::String="")
 
-    #Graph points
+    # Graph points
     outliers = [pt for (pt, outlier) in zip(trace[:points], trace[:outliers]) if outlier]
     inliers =  [pt for (pt, outlier) in zip(trace[:points], trace[:outliers]) if !outlier]
     scatter(map(first, inliers), map(last, inliers), markercolor="blue", label=nothing) 
     scatter!(map(first, outliers), map(last, outliers), markercolor="red", label=nothing)
 
-    #Graph Line
+    # Graph Line
     PLT = plot!(trace[:xs], trace[:ys], color = "black", lw = 3, label = nothing)
 
-
-    #LogPlot
+    # LogPlot
     scatter(map(first, inliers), log_modulus.(map(last, inliers)), markercolor="blue", label=nothing) 
     scatter!(map(first, outliers), log_modulus.(map(last, outliers)), markercolor="red", label=nothing)
     ExpPLT = plot!(trace[:xs], log_modulus.(trace[:ys]), color = "black", lw = 3, label = nothing)
@@ -89,7 +106,7 @@ function visualize_trace(trace::Dict; title::String="")
     return DuoPlot
 end
 
-    
+
 """
     Creates a choicemap that forces the output of the model to be the true output of the data. 
     This is used to find the conditional probability that any model leads to this outcome
@@ -105,7 +122,7 @@ function make_constraints(ys::Vector{Float64})
     constraints
 end;
 
-    
+
 """
     Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
 
@@ -131,7 +148,7 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     tr
 end;
 
-        
+
 """
     Creates a GIF of the model MCMC permutation on the data
 
@@ -155,8 +172,8 @@ function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoi
     end
 end
 
-        
-#Main
+
+# Main
 show(VizGenModel(Linear_regression_with_outliers),"step02_test")
 observations = make_constraints(ys);
 show(VizGenMCMC(Linear_regression_with_outliers, xs, observations,block_resimulation_update,100,RetAni=true),"step03.gif")

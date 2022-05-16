@@ -1,3 +1,21 @@
+#===============================================================================
+|                                                                              |
+|                                   step03.jl                                  |
+|                                                                              |
+|==============================================================================|
+|                                                                              |
+|        This step generates and displays a segmented linear model.            |
+|                                                                              |
+|        Author(s): Steve Goldstein, Marlin Lee, Wansoo Cho,                   |
+|                   AbeMegahed                                                 |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|==============================================================================|
+|     Copyright (C) 2022, Data Science Institute, University of Wisconsin      |
+|==============================================================================#
+
 using  Gen
 using Plots
 
@@ -24,7 +42,7 @@ end
 Calculate the y value the model generates before noise or outliers are added. Each chunk has its own slope and has a y intercept defined
 such that each chunk edge matchs.
 
-    #Arguments
+    # Arguments
 - `xs::Vector{Float64}` - The input vector that we are generating based on
 - `Buffer_y::Float64` - The initial y intercept of that model
 - `Slopes::Vector{Float64}` - The slopes of each chunk
@@ -53,7 +71,7 @@ end
 CreCreates a random model where the data is broken into chunks and a Linear line is fit on the data with noise and some probability that 
 they are outliers.
 
-    #Arguments
+    # Arguments
 - `xs::Vector{Float64}` - The input vector that we are generating based on
 """
 @gen function Linear_Spline_with_outliers(xs::Vector{<:Real})
@@ -67,35 +85,31 @@ they are outliers.
     #Last are the ones that vary for every point. These range from 1 to n
 
 
-    #Unique to process
+    # Unique to process
 
-    #Where the series starts. In the log model this is around 12 and I give it a pretty big window
+    # Where the series starts. In the log model this is around 12 and I give it a pretty big window
     Buffer_y ~ gamma(200, 200)
     
-    #the probability any given point is a outlier
+    # the probability any given point is a outlier
     prob_outlier ~ uniform(.05, .1)
 
-    #The scaling factor on outliers:
+    # The scaling factor on outliers:
     OutlierDeg ~ uniform(1, 5)
     
     #unique to chunk
 
-    #The data apears to have no slope over 3 so a sd of 2 should capture the true slopes with high probability
+    # The data apears to have no slope over 3 so a sd of 2 should capture the true slopes with high probability
     Slopes = [{(:slope, i)} ~ normal(0, 3000) for i=1:NumChunks]
 
-    #The distribution of the noise. It gets fed into the sd of a normal distribution so the distribution of the noise needs to be always positive
+    # The distribution of the noise. It gets fed into the sd of a normal distribution so the distribution of the noise needs to be always positive
     noise = [{(:noise, i)} ~ gamma(150, 150) for i=1:NumChunks]
    
-
-    #EveryPoint
+    # EveryPoint
 
     #is using the prob_outlier vector above to decide if each point is an outlier. the model we are using now has 
     #The slope and sd $OutlierDeg times larger then the non outliers. so we times the mu and sd by this value in the last step
     PointOutlier = ((OutlierDeg-1)*[{:data => i => :is_outlier} ~ bernoulli(prob_outlier) for i=1:n] .+ 1)
 
-    
-    
-    
     TrueVec = yValCalc(xs,Buffer_y,Slopes)
     ys = [{:data => i => :y} ~ 
         normal(
@@ -156,15 +170,12 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     tr
 end;
 
-    
-#Main
+# Main
 
-#Visualize the spline model that we have created.
-
+# Visualize the spline model that we have created.
 show(VizGenModel(Linear_Spline_with_outliers),"step03_test.png")
 
-
-#Constrain the model so the output in the wastewater output
+# Constrain the model so the output in the wastewater output
 observations = make_constraints(ys);
 #Shows a gif of the MCMC working on the Waste Water data
 show(VizGenMCMC(Linear_Spline_with_outliers, xs, observations,block_resimulation_update,300,RetAni=true),"step03.gif")

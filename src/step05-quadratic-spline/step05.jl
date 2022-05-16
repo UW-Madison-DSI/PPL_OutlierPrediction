@@ -1,5 +1,23 @@
+#===============================================================================
+|                                                                              |
+|                                   step05.jl                                  |
+|                                                                              |
+|==============================================================================|
+|                                                                              |
+|        This step generates and displays a quadratic segmented model          |
+|        with no smoothing between the segments.                               |
+|                                                                              |
+|        Author(s): Steve Goldstein, Marlin Lee, Wansoo Cho,                   |
+|                   AbeMegahed                                                 |
+|                                                                              |
+|        This file is subject to the terms and conditions defined in           |
+|        'LICENSE.txt', which is part of this source code distribution.        |
+|                                                                              |
+|==============================================================================|
+|     Copyright (C) 2022, Data Science Institute, University of Wisconsin      |
+|==============================================================================#
 
-using  Gen
+using Gen
 using Plots
 
 include("../step01-importing-data/utilities/display.jl")
@@ -14,7 +32,7 @@ SubChunkSize = 50
 
 """
     calculate what chunk point i is in.
-    #Arguments
+    # Arguments
 - 'i::Int' - index of input we want to find the associated chunk of
 -  `chunkSize` - The size of the chunks.
 """
@@ -24,7 +42,7 @@ end
 
 """
     calculate the delta x from the start of each chunk
-    #Arguments
+    # Arguments
 - 'i::Int' - index of input we want to find the associated chunk of
 -  `chunkSize` - The size of the chunks.
 """
@@ -37,7 +55,7 @@ end
 Calculate the y value the model generates before noise or outliers are added. Each chunk has its own quadratic and linear term and 
 a y intercept picked so each chunk connects
 
-    #Arguments
+    # Arguments
 - `xs::Vector{Float64}` - The input vector that we are generating based on
 - `Buffer_y::Float64` - The initial y intercept of that model
 - `Slopes::Vector{Float64}` - The quadratic term of each chunk
@@ -47,15 +65,13 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
     n = length(xs)
     NumChunks = DiffrenceIndex(n)
 
-
-    #calculates the change of y from the previous chunk to the current x. We combine this with a set of y ofset values
+    # Calculates the change of y from the previous chunk to the current x. We combine this with a set of y ofset values
     #in the next step to get the true mu fed into the normal distribution
     #TrueDeltaMu n = Slope[chunk](x[i]- x[Last chunk])
     TrueDeltaMu = [Slopes[DiffrenceIndex(i)]*SubXDif(xs,i)^2 + SubSlope[DiffrenceIndex(i)]*SubXDif(xs,i) for i=1:n]
 
-
-    #calculating the 'y intercept' of each chunk to make sure each line connects to the last one
-    #Because each intercept gets added to the last one we take the cumalitive sum to get the total ofset needed at each step
+    # Calculating the 'y intercept' of each chunk to make sure each line connects to the last one
+    # Because each intercept gets added to the last one we take the cumalitive sum to get the total ofset needed at each step
     #The first value should be the initial ofset Buffer_y to get everything aligned
     #ysOfseted = [Buffer_y, Slope[chunk](x[chunk]- x[Last chunk])]
     ysOfseted = cumsum(pushfirst!([TrueDeltaMu[(i)*SubChunkSize] - TrueDeltaMu[(i-1)*SubChunkSize+1] for i=1:(NumChunks-1)],Buffer_y))
@@ -68,7 +84,7 @@ end
 Creates a random model where the data is broken into chunks and a quadratic curve is fit on the data with noise 
 and some probability that  they are outliers.
 
-    #Arguments
+    # Arguments
 - `xs::Vector{Float64}` - The input vector that we are generating based on
 """
 @gen function Quad_spline_with_outliers(xs::Vector{<:Real})
@@ -88,44 +104,39 @@ and some probability that  they are outliers.
     #Last are the ones that vary for every point. These range from 1 to n
 
 
-    #Unique to process
+    # Unique to process
 
-    #Where the series starts. In the log model this is around 12 and I give it a pretty big window
+    # Where the series starts. In the log model this is around 12 and I give it a pretty big window
     Buffer_y ~ normal(1000, 10000) 
 
-    #the probability any given point is a outlier
+    # The probability any given point is a outlier
     prob_outlier ~ uniform(.05, .1)
 
-    #The scaling factor on outliers:
+    # The scaling factor on outliers:
     OutlierDeg ~ uniform(1, 5)
     
-    #unique to chunk
+    # Unique to chunk
 
-    #The data apears to have no slope over 3 so a sd of 2 should capture the true slopes with high probability
+    # The data apears to have no slope over 3 so a sd of 2 should capture the true slopes with high probability
     Slopes = [{(:slope, i)} ~ normal(0, 300) for i=1:NumChunks]
 
-    #The data apears to have no slope over 3 so a sd of 2 should capture the true slopes with high probability
+    # The data apears to have no slope over 3 so a sd of 2 should capture the true slopes with high probability
     SubSlope = [{(:SubSlope, i)} ~ normal(0, 300) for i=1:NumChunks]
 
-    #The distribution of the noise. It gets fed into the sd of a normal distribution so the distribution of the noise needs to be always positive
+    # The distribution of the noise. It gets fed into the sd of a normal distribution so the distribution of the noise needs to be always positive
     noise = [{(:noise, i)} ~ gamma(200, 200) for i=1:NumChunks]
-
-
-
 
     #EveryPoint
 
-    #is using the prob_outlier vector above to decide if each point is an outlier. the model we are using now has 
-    #The slope and sd $OutlierDeg times larger then the non outliers. so we times the mu and sd by this value in the last step
+    # Is using the prob_outlier vector above to decide if each point is an outlier. the model we are using now has 
+    # The slope and sd $OutlierDeg times larger then the non outliers. so we times the mu and sd by this value in the last step
     PointOutlier = ((OutlierDeg-1)*[{:data => i => :is_outlier} ~ bernoulli(prob_outlier) for i=1:n] .+ 1)
 
-    
-
-    #The random var fit to the actual data. It is created as a combination of previous parts
-    #The process was discribed in previous steps
-    #ys = normal(mu, sd)
-    #mu = (2*isoutlier + 1)yvalue[i] + ysOfseted[current chunk]
-    #sd = (2*isoutlier + 1)noise[i]
+    # The random var fit to the actual data. It is created as a combination of previous parts
+    # The process was discribed in previous steps
+    # ys = normal(mu, sd)
+    # mu = (2*isoutlier + 1)yvalue[i] + ysOfseted[current chunk]
+    # sd = (2*isoutlier + 1)noise[i]
     TrueVec = yValCalc(xs,Buffer_y,Slopes, SubSlope)
     ys = [{:data => i => :y} ~ 
         normal(
@@ -140,7 +151,7 @@ end;
 ```
 Extract the infomation needed to plot from the more complex Gen trace object.
 
-#Arguments
+# Arguments
 - 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
 ```
 function serialize_trace(trace::Gen.DynamicDSLTrace)
@@ -178,8 +189,6 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
         (tr, _) = mh(tr, line_params)
     end
 
-
-    
     # Blocks 2-N+1: Update the outlier classifications
     for i=1:n
         (tr, _) = mh(tr, select(:data => i => :is_outlier))
@@ -193,9 +202,9 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
 end;
   
 
-#Main
+# Main
 show(VizGenModel(Quad_spline_with_outliers),"step05_test.png")
-
 observations = make_constraints(ys);
-#Shows a gif of the MCMC working on the Waste Water data
+
+# Shows a gif of the MCMC working on the Waste Water data
 show(VizGenMCMC(Quad_spline_with_outliers, xs, observations,block_resimulation_update, 300,RetAni=true),"step05.gif")
