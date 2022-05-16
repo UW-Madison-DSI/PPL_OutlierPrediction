@@ -36,6 +36,7 @@ ys = DF.DetrendedN1
 - 'xs::Vector{<:Real}' input data to be used to generate output.
 """
 @gen function Linear_regression_with_outliers(xs::Vector{<:Real})
+
     # First, generate the core parameters of the model. 
     # These parameters are random because we will MCMC to find what parameters have higher probability
     slope ~ normal(0, 1000)         # We use normal because we want a symetric distribution around zero that has all values have positive probability
@@ -145,10 +146,10 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
         (tr, _) = mh(tr, select(:data => i => :is_outlier))
     end
     
-    # Block N+2: Update the prob_outlier parameter
+    # Block N+2: Update the prob_outlier parameter.
     (tr, _) = mh(tr, select(:prob_outlier))
     
-    # Return the updated trace
+    # Return the updated trace.
     tr
 end;
 
