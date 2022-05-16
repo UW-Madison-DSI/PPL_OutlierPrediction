@@ -42,7 +42,9 @@ end
 
 
 """
-    Calculate the y value the model generates before noise or outliers are added. Each chunk has its own slope and has a y intercept defined such that each chunk edge matchs.
+    Calculate the y value the model generates before noise or outliers are added. 
+
+    Each chunk has its own slope and has a y intercept defined such that each chunk edge matchs.
 
     # Arguments
 - `xs::Vector{Float64}` - The input vector that we are generating based on
@@ -59,7 +61,6 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
     # ysOfseted = [Buffer_y, Slope[chunk](x[chunk]- x[Last chunk])]
     ysOfseted = cumsum(pushfirst!([Slopes[i]*(xs[(i)*SubChunkSize] - xs[(i-1)*SubChunkSize+1]) for i=1:(NumChunks-1)],Buffer_y))
     
-    
     # Calculates the change of y from the previous chunk to the current x. We combine this with a set of y ofset values.
     # In the next step to get the true mu fed into the normal distribution
     # TrueDeltaMu n = Slope[chunk](x[i]- x[Last chunk])
@@ -69,7 +70,7 @@ end
 
 
 """
-    Creates a random model where the data is broken into chunks and a Linear line is fit on the data with noise and some probability that they are outliers.
+    Creates a random model where the data is broken into chunks and a linear line is fit on the data with noise and some probability that they are outliers.
 
     # Arguments
 - `xs::Vector{Float64}` - The input vector that we are generating based on
@@ -95,7 +96,7 @@ end
     # The scaling factor on outliers:
     OutlierDeg ~ uniform(1, 5)
     
-    #unique to chunk
+    # Unique to chunk
 
     # The data apears to have no slope over 3 so a sd of 2 should capture the true slopes with high probability.
     Slopes = [{(:slope, i)} ~ normal(0, 3000) for i=1:NumChunks]
