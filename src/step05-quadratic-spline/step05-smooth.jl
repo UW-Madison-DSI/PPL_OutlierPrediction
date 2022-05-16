@@ -20,6 +20,7 @@ function DiffrenceIndex(i::Int; chunkSize = SubChunkSize)#helper function to fin
     return(div(i,chunkSize,RoundUp))
 end
 
+
 """
     calculate the delta x from the start of each chunk
     #Arguments
@@ -63,6 +64,7 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
 
     ys = [TrueDeltaMu[i] + ysOfseted[DiffrenceIndex(i)] for i=1:n]
 end
+
 
 """
 Creates a random model where the data is broken into chunks and a quadratic curve is fit on the data with noise 
@@ -129,12 +131,12 @@ and some probability that  they are outliers. the quadratic curves are picked su
 end;
 
 
-```
+"""
 Extract the infomation needed to plot from the more complex Gen trace object.
 
 #Arguments
 - 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
-```
+"""
 function serialize_trace(trace::Gen.DynamicDSLTrace)
     (xs,) = Gen.get_args(trace)
     n = length(xs)
@@ -147,8 +149,6 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
          :ys => yValCalc(xs, trace[:Buffer_y], slopes,trace[:Buffer_SubSlope]))
     return(FlatDict)
 end
-
-
 
 
 """
@@ -185,6 +185,7 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     tr
 end;
 
+    
 #Main
 show(VizGenModel(Quad_spline_with_outliers_smooth), "step05Smooth_test.png")
 observations = make_constraints(ys);
