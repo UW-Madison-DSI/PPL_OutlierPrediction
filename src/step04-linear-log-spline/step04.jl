@@ -43,7 +43,9 @@ end
 
 
 """
-    Calculate the y value the model generates before noise or outliers are added. Each chunk has its own slope and has a y intercept defined such that each chunk edge matchs. exact same function as in step 3.
+    Calculate the y value the model generates before noise or outliers are added. 
+
+    Each chunk has its own slope and has a y intercept defined such that each chunk edge matchs. exact same function as in step 3.
 
     # Arguments
 - `xs::Vector{Float64}` - The input vector that we are generating based on
@@ -53,7 +55,6 @@ end
 function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64})
     n = length(xs)
     NumChunks = DiffrenceIndex(n)
-
 
     # Calculating the 'y intercept' of each chunk to make sure each line connects to the last one.
     # Because each intercept gets added to the last one we take the cumalitive sum to get the total ofset needed at each step.
@@ -122,7 +123,9 @@ end;
 
 
 """
-    Extract the infomation needed to plot from the more complex Gen trace object. exp the y values so we view the data in the same form as the other sections.
+    Extract the infomation needed to plot from the more complex Gen trace object. 
+
+    Exponentiate the y values so we view the data in the same form as the other sections.
 
     # Arguments
 - 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model.
@@ -176,6 +179,6 @@ end;
 # Main
 show(VizGenModel(Log_Linear_Spline_with_outliers),"step04_test.png")
 
-# Shows a gif of the MCMC working on the Waste Water data
+# Shows a gif of the MCMC working on the Waste Water data.
 observations = make_constraints(log.(ys));
 show(VizGenMCMC(Log_Linear_Spline_with_outliers, xs, observations, block_resimulation_update, 100),"step05.gif")
