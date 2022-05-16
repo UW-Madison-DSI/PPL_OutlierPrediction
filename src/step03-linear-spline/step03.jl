@@ -19,6 +19,7 @@ function DiffrenceIndex(i::Int; chunkSize = SubChunkSize)#helper function to fin
     return(div(i,chunkSize,RoundUp))
 end
 
+
 """
 Calculate the y value the model generates before noise or outliers are added. Each chunk has its own slope and has a y intercept defined
 such that each chunk edge matchs.
@@ -127,8 +128,6 @@ function serialize_trace(trace::Gen.DynamicDSLTrace)
 end
 
 
-
-
 """
     Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones
 
@@ -157,6 +156,7 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
     tr
 end;
 
+    
 #Main
 
 #Visualize the spline model that we have created.
