@@ -130,7 +130,7 @@ end;
 
 
 """
-    Perform a MCMC update of the Gen model updating. updates the global parameters the the local ones.
+    Perform a MCMC update of the Gen model updating. Updates the global parameters.
 
     # Arguments
 - 'tr::Gen.DynamicDSLTrace' - The model trace containing the parameters that we update
