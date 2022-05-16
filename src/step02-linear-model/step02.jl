@@ -39,10 +39,10 @@ ys = DF.DetrendedN1
 
     # First, generate the core parameters of the model. 
     # These parameters are random because we will MCMC to find what parameters have higher probability
-    slope ~ normal(0, 1000)         # We use normal because we want a symetric distribution around zero that has all values have positive probability
-    intercept ~ normal(0, 1000)     #Same as why we use normal for slope
-    noise ~ gamma(250, 250)#noise needs to be always positive and we want it to look vaguely normal so gamma makes sense
-    prob_outlier ~ uniform(0, 1)    #no bias in the % of outlier
+    slope ~ normal(0, 1000)         # We use normal because we want a symetric distribution around zero that has all values have positive probability.
+    intercept ~ normal(0, 1000)     # Same as why we use normal for slope.
+    noise ~ gamma(250, 250)         # Noise needs to be always positive and we want it to look vaguely normal so gamma makes sense.
+    prob_outlier ~ uniform(0, 1)    # No bias in the % of outlier.
     
     # Used to set a 1 to 1 correspondence to ys.
     n = length(xs)
