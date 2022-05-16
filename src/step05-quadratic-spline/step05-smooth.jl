@@ -71,13 +71,13 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
     # The SubSlope is defined by the previous slopes and the initial subslope.
     SubSlope = cumsum(pushfirst!([SubChunkSize * Slopes[i] for i=1:NumChunks], Buffer_SubSlope))
     
-     # Calculates the change of y from the previous chunk to the current x. We combine this with a set of y ofset values in the next step to get the true mu fed into the normal distribution.
+     # Calculates the change of y from the previous chunk to the current x. We combine this with a set of y offset values in the next step to get the true mu fed into the normal distribution.
     #TrueDeltaMu n = Slope[chunk](x[i]- x[Last chunk])
     TrueDeltaMu = [Slopes[DiffrenceIndex(i)]*SubXDif(xs,i)^2 + SubSlope[DiffrenceIndex(i)]*SubXDif(xs,i) for i=1:n]
 
     # Calculating the 'y intercept' of each chunk to make sure each line connects to the last one.
     # Because each intercept gets added to the last one we take the cumalitive sum to get the total offset needed at each step.
-    # The first value should be the initial ofset Buffer_y to get everything aligned
+    # The first value should be the initial offset Buffer_y to get everything aligned
     # ysOfseted = [Buffer_y, Slope[chunk](x[chunk]- x[Last chunk])]
     ysOfseted = cumsum(pushfirst!([TrueDeltaMu[(i)*SubChunkSize] - TrueDeltaMu[(i-1)*SubChunkSize+1] for i=1:(NumChunks-1)],Buffer_y))
 

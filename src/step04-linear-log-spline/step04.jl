@@ -4,7 +4,7 @@
 |                                                                              |
 |==============================================================================|
 |                                                                              |
-|        This step generates and displays a linear segmented model with        |
+|        This step generates and displays a segmented linear model with        |
 |        the data mapped to a log scale.                                       |
 |                                                                              |
 |        Author(s): Steve Goldstein, Marlin Lee, Wansoo Cho,                   |
@@ -34,7 +34,7 @@ SubChunkSize = 20
     Calculate what chunk point i is in.
 
     # Arguments
-- 'i::Int' - index of input we want to find the associated chunk of
+- 'i::Int' - index of input we want to find the associated chunk of.
 -  `chunkSize` - The size of the chunks.
 """
 function DiffrenceIndex(i::Int; chunkSize = SubChunkSize)#helper function to find out what chunk a point is in
@@ -48,17 +48,17 @@ end
     Each chunk has its own slope and has a y intercept defined such that each chunk edge matchs. exact same function as in step 3.
 
     # Arguments
-- `xs::Vector{Float64}` - The input vector that we are generating based on
-- `Buffer_y::Float64` - The initial y intercept of that model
-- `Slopes::Vector{Float64}` - The slopes of each chunk
+- `xs::Vector{Float64}` - The input vector that we are generating based on.
+- `Buffer_y::Float64` - The initial y intercept of that model.
+- `Slopes::Vector{Float64}` - The slopes of each chunk.
 """
 function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64})
     n = length(xs)
     NumChunks = DiffrenceIndex(n)
 
     # Calculating the 'y intercept' of each chunk to make sure each line connects to the last one.
-    # Because each intercept gets added to the last one we take the cumalitive sum to get the total ofset needed at each step.
-    # The first value should be the initial ofset Buffer_y to get everything aligned.
+    # Because each intercept gets added to the last one we take the cumalitive sum to get the total offset needed at each step.
+    # The first value should be the initial offset Buffer_y to get everything aligned.
     # ysOfseted = [Buffer_y, Slope[chunk](x[chunk]- x[Last chunk])]
     ysOfseted = cumsum(pushfirst!([Slopes[i]*(xs[(i)*SubChunkSize] - xs[(i-1)*SubChunkSize+1]) for i=1:(NumChunks-1)],Buffer_y))
     

@@ -57,11 +57,11 @@ function yValCalc(xs::Vector{Float64}, Buffer_y::Float64, Slopes::Vector{Float64
 
     # Calculating the 'y intercept' of each chunk to make sure each line connects to the last one.
     # Because each intercept gets added to the last one we take the cumulative sum to get the total offset needed at each step.
-    # The first value should be the initial ofset Buffer_y to get everything aligned
+    # The first value should be the initial offset Buffer_y to get everything aligned.
     # ysOfseted = [Buffer_y, Slope[chunk](x[chunk]- x[Last chunk])]
     ysOfseted = cumsum(pushfirst!([Slopes[i]*(xs[(i)*SubChunkSize] - xs[(i-1)*SubChunkSize+1]) for i=1:(NumChunks-1)],Buffer_y))
     
-    # Calculates the change of y from the previous chunk to the current x. We combine this with a set of y ofset values.
+    # Calculates the change of y from the previous chunk to the current x. We combine this with a set of y offset values.
     # In the next step to get the true mu fed into the normal distribution
     # TrueDeltaMu n = Slope[chunk](x[i]- x[Last chunk])
     TrueDeltaMu = [Slopes[DiffrenceIndex(i)]*(xs[i] - xs[div(i-1,SubChunkSize,RoundDown)*SubChunkSize+1]) for i=1:n]
