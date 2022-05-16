@@ -30,7 +30,9 @@ ys = DF.DetrendedN1
 
 
 """
-    Creates a random linear model with some probablity any given point is an outlier. The models is linear with added noise and some points being an outlier with no mean and large amount of noise 
+    Creates a random linear model with some probablity any given point is an outlier. 
+
+    The model is linear with added noise and some points being an outlier with no mean and large amount of noise.
 
     # Arguments
 - 'xs::Vector{<:Real}' input data to be used to generate output.
@@ -68,7 +70,7 @@ end;
 
 
 """
-    Extract the infomation needed to plot from the more complex Gen trace object
+    Extract the infomation needed to plot from the more complex Gen trace object.
 
     # Arguments
 - 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
@@ -155,14 +157,14 @@ end;
 
 
 """
-    Creates a GIF of the model MCMC permutation on the data
+    Creates a GIF of the model MCMC permutation on the data.
 
     # Arguments
-- 'GenFunction::DynamicDSLFunction' - @Gen model function with random parameters
-- 'xs,observations::DynamicChoiceMap' - contstraints on the model. Forces the output to equal the real messurements
-- 'updateTrace::Function' - A function oh how to MCMC chunk update the code
-- 'NumFrame::Int64' - The number of frames to render
-- 'RetAni' - used to return the animation object instead of the gif
+- 'GenFunction::DynamicDSLFunction' - @Gen model function with random parameters.
+- 'xs,observations::DynamicChoiceMap' - constraints on the model. Forces the output to equal the real measurements.
+- 'updateTrace::Function' - A function oh how to MCMC chunk update the code.
+- 'NumFrame::Int64' - The number of frames to render.
+- 'RetAni' - used to return the animation object instead of the gif.
 """
 function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64; RetAni::Bool=false)
     t, = generate(GenFunction, (xs,), observations)#Create initial set of parameters to iterate on
