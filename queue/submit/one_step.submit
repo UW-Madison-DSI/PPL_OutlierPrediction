@@ -1,15 +1,15 @@
 # Julia remote job submit file
 
 universe = vanilla
-executable = run_one_step.sh
+#executable = run_one_step.sh
 
 ######################
 #
-tarFile = julia-1.7.2-linux-x86_64.tar.gz 
-gitHubRepo = 
-juliaScriptFile =
-juliaScriptDir = dirname $juliaScriptFile
-scriptFile = ...
+#tarFile = julia-1.7.2-linux-x86_64.tar.gz 
+#gitHubRepo = 
+#juliaScriptFile =
+#juliaScriptDir = dirname $juliaScriptFile
+#scriptFile = ...
 
 args = 
 
@@ -20,9 +20,10 @@ error = queue/err/scriptFile.$(CLUSTER).$(PROCESS).err
 out = queue/out/scriptFile.$(CLUSTER).$(PROCESS).out
 
 
-transfer_input_files = squid URL: julia-1.7.2-linux-x86_64.tar.gz gitHubRepo..
-transfer_output_files =
-file_remaps....
+transfer_input_files = https://github.com/AFIDSI/PPL_OutlierPrediction/archive/refs/heads/HTCondor.zip, http://proxy.chtc.wisc.edu/SQUID/sgoldstein/PPL_OutlierPrediction/julia-1.7.2-linux-x86_64.tar.gz, bin/run_one_step.sh 
+
+#transfer_output_files =
+#file_remaps....
 
 requirements = (OpSysMajorVer =?= 7)
 request_cpus = 1
