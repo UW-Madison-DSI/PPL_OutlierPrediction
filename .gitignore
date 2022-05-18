@@ -1,1 +1,9 @@
 .DS_Store
+## Condor stdout, err, logs:
+queue/log
+queue/error
+queue/out
+
+## emacs tmp files
+\#*
+*~

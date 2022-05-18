@@ -16,10 +16,14 @@ PROCESS=$1; shift
 
 ## Julia
 tar zxf $juliaTarFile
-juliaDir=${jualiaTarFile/-linux*/}
+juliaDir=${juliaTarFile/-linux*/}
 
-export PATH=$HOME/$juliaDir/bin:$PATH
-export JULIA_DEPOT_PATH=$HOME/$juliaDir/site_packages:$JULIA_DEPOT_PATH
+export PATH=$PWD/$juliaDir/bin:$PATH
+export JULIA_DEPOT_PATH=$PWD/$juliaDir/site_packages:$JULIA_DEPOT_PATH
+
+echo $juliaDir
+echo $PATH
+which julia
 
 ### PPL code
 unzip -qq $repoZipFile
@@ -40,5 +44,5 @@ popd
 
 ##################
 # exit with return code of julia execution.
-exit($status)
+exit $status
 

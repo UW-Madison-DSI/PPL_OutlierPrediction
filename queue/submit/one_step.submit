@@ -13,9 +13,9 @@ step = step01
 args = $(juliaTarFile) $(repoZipFile) $(step) $(CLUSTER) $(PROCESS)
 
 
-log = queue/log/scriptFile.$(CLUSTER).log
-error = queue/err/scriptFile.$(CLUSTER).$(PROCESS).err
-output = queue/out/scriptFile.$(CLUSTER).$(PROCESS).out
+log = queue/log/PPL_OutlierPrediction.$(CLUSTER).log
+error = queue/error/$(step).$(CLUSTER).$(PROCESS).err
+output = queue/out/$(step).$(CLUSTER).$(PROCESS).out
 
 
 transfer_input_files = http://proxy.chtc.wisc.edu/SQUID/sgoldstein/PPL_OutlierPrediction/$(juliaTarFile), https://github.com/AFIDSI/PPL_OutlierPrediction/archive/refs/heads/$(repoZipFile), 
