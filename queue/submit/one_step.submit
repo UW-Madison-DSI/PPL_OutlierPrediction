@@ -2,29 +2,27 @@
 
 universe = vanilla
 executable = bin/run_one_step.sh
-
-######################
-#
-juliaTarFile = julia-1.7.2-linux-x86_64.tar.gz 
-repoZipFile  = HTCondor.zip
-step = step01
-
-
 args = $(juliaTarFile) $(repoZipFile) $(step) $(CLUSTER) $(PROCESS)
 
+######################
+### files to create remote env
+juliaTarFile = julia-1.7.2-linux-x86_64.tar.gz 
+repoZipFile  = HTCondor.zip
 
+transfer_input_files = http://proxy.chtc.wisc.edu/SQUID/sgoldstein/PPL_OutlierPrediction/$(juliaTarFile), https://github.com/AFIDSI/PPL_OutlierPrediction/archive/refs/heads/$(repoZipFile) 
+
+
+
+#############################
+## condor bookkeeping
 log = queue/log/PPL_OutlierPrediction.$(CLUSTER).log
 error = queue/error/$(step).$(CLUSTER).$(PROCESS).err
 output = queue/out/$(step).$(CLUSTER).$(PROCESS).out
-
-
-transfer_input_files = http://proxy.chtc.wisc.edu/SQUID/sgoldstein/PPL_OutlierPrediction/$(juliaTarFile), https://github.com/AFIDSI/PPL_OutlierPrediction/archive/refs/heads/$(repoZipFile), 
-
 
 requirements = (OpSysMajorVer =?= 7)
 request_cpus = 1
 request_memory = 4GB
 request_disk = 2GB
 
-queue
+queue step in step01, step02, step03, step04, step05
 

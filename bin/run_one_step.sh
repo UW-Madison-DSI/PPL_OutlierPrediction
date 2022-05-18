@@ -20,10 +20,8 @@ juliaDir=${juliaTarFile/-linux*/}
 
 export PATH=$PWD/$juliaDir/bin:$PATH
 export JULIA_DEPOT_PATH=$PWD/$juliaDir/site_packages:$JULIA_DEPOT_PATH
+export HOME=$PWD
 
-echo $juliaDir
-echo $PATH
-which julia
 
 ### PPL code
 unzip -qq $repoZipFile
