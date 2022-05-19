@@ -25,22 +25,21 @@ export HOME=$PWD
 
 ### PPL code
 unzip -qq $repoZipFile
-pushd PPL_OutlierPrediction*/src/$step-*/
+cd PPL_OutlierPrediction*/src/$step-*/
 
 ####################
 #  Run the script
 julia $step.jl
-status=$?
+juliaStatus=$?
 
 ## missing:  validate that toml env is consistent with squid tarball;
 ## julia script to update or check the env??
 
 ## copy image file to top level dir so that it will be transferred
 ##  rename with job ID to prevent clobbering 
-cp $step.png $HOME/$step.$CLUSTER.$PROCESS.png  
-popd
+cp $step*.png $HOME/$step.$CLUSTER.$PROCESS.png  
 
 ##################
 # exit with return code of julia execution.
-exit $status
+exit $juliaStatus
 

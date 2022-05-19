@@ -12,7 +12,6 @@ repoZipFile  = HTCondor.zip
 transfer_input_files = http://proxy.chtc.wisc.edu/SQUID/sgoldstein/PPL_OutlierPrediction/$(juliaTarFile), https://github.com/AFIDSI/PPL_OutlierPrediction/archive/refs/heads/$(repoZipFile) 
 
 
-
 #############################
 ## condor bookkeeping
 log = queue/log/PPL_OutlierPrediction.$(CLUSTER).log
