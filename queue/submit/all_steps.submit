@@ -1,6 +1,5 @@
 # Julia remote job submit file
-## To run: condor_submit queue/submit/one_step.submit -append step=step<0N> 
-
+## To run: condor_submit queue/submit/all_steps.submit 
 universe = vanilla
 executable = bin/run_one_step.sh
 args = $(juliaTarFile) $(repoZipFile) $(step) $(CLUSTER) $(PROCESS)
@@ -22,7 +21,7 @@ output = queue/out/$(step).$(CLUSTER).$(PROCESS).out
 requirements = (OpSysMajorVer =?= 7)
 request_cpus = 1
 request_memory = 4GB
-request_disk = 2GB
+request_disk = 3GB
 
-queue
+queue step in step01, step02, step03, step04, step05, step06
 
