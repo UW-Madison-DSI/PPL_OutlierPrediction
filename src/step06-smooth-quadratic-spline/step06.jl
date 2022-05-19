@@ -197,8 +197,8 @@ end;
 
 
 # Main
-show(VizGenModel(Quad_spline_with_outliers_smooth), "step05Smooth_test.png")
+show(VizGenModel(Quad_spline_with_outliers_smooth), "step06.png")
 
 # Shows a gif of the MCMC working on the Waste Water data.
 observations = make_constraints(ys);
-show(VizGenMCMC(Quad_spline_with_outliers_smooth, xs, observations,block_resimulation_update, 300,RetAni=true),"step05Smooth.gif")
+show(VizGenMCMC(Quad_spline_with_outliers_smooth, xs, observations,block_resimulation_update, 300,RetAni=true),"step06.gif")
