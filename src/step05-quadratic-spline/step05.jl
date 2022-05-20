@@ -146,12 +146,12 @@ end
 end;
 
 
-```
+"""
     Extract the infomation needed to plot from the more complex Gen trace object.
 
     # Arguments
 - 'trace::Gen.DynamicDSLTrace' Gen trace of infomation about the model
-```
+"""
 function serialize_trace(trace::Gen.DynamicDSLTrace)
     (xs,) = Gen.get_args(trace)
     n = length(xs)
