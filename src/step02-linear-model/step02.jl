@@ -180,8 +180,5 @@ function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoi
     end
 end
 
-
-# Main
-show(VizGenModel(Linear_regression_with_outliers),"step02.png")
 observations = make_constraints(ys);
 show(VizGenMCMC(Linear_regression_with_outliers, xs, observations,block_resimulation_update,100),"step02.png")

@@ -200,8 +200,6 @@ function block_resimulation_update(tr::Gen.DynamicDSLTrace)
 end;
   
 
-# Main
-show(VizGenModel(Quad_spline_with_outliers),"step05.png")
 
 # Shows a gif of the MCMC working on the Waste Water data.
 observations = make_constraints(ys);

@@ -169,8 +169,6 @@ end;
 
 # Main
 
-# Visualize the spline model that we have created.
-show(VizGenModel(Linear_Spline_with_outliers),"step03.png")
 
 # Constrain the model so the output in the wastewater output.
 observations = make_constraints(ys);
