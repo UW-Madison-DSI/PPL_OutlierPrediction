@@ -23,7 +23,7 @@ function visualize_trace(trace::Dict; title::String="")
     #Graph points
     outliers = [pt for (pt, outlier) in zip(trace[:points], trace[:outliers]) if outlier]
     inliers =  [pt for (pt, outlier) in zip(trace[:points], trace[:outliers]) if !outlier]
-    scatter(map(first, inliers), map(last, inliers), markercolor="blue", label="Regular") 
+    scatter(map(first, inliers), map(last, inliers), markercolor="blue", title ="Regular", label=nothing) 
     scatter!(map(first, outliers), map(last, outliers), markercolor="red", label=nothing)
 
     #Graph Line
@@ -31,7 +31,7 @@ function visualize_trace(trace::Dict; title::String="")
 
 
     #LogPlot
-    scatter(map(first, inliers), log_modulus.(map(last, inliers)), markercolor="blue", label="Log") 
+    scatter(map(first, inliers), log_modulus.(map(last, inliers)), markercolor="blue", title ="Log", label=nothing) 
     scatter!(map(first, outliers), log_modulus.(map(last, outliers)), markercolor="red", label=nothing)
     ExpPLT = plot!(trace[:xs], log_modulus.(trace[:ys]), color = "black", lw = 3, label = nothing)
     
