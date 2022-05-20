@@ -19,4 +19,4 @@ Please allow several seconds for the Julia interepreter to load required modules
 
 Output:
 -------
-![step06.png](images/step06.png)
+![step06.png](images/step06.gif)
