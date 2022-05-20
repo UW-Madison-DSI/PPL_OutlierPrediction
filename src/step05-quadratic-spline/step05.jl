@@ -203,4 +203,4 @@ end;
 
 # Shows a gif of the MCMC working on the Waste Water data.
 observations = make_constraints(ys);
-show(VizGenMCMC(Quad_spline_with_outliers, xs, observations,block_resimulation_update, 300),"step05.png")
+show(VizGenMCMC(Quad_spline_with_outliers, xs, observations,block_resimulation_update, 3), "step05.gif")
