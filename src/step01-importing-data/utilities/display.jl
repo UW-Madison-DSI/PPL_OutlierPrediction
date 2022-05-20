@@ -14,15 +14,29 @@ when running locally or saved to a file when running remotely.
 """
 function show(plot, filename)
     if (is_local())
-        # Open a new window to display the plot.
-        display(plot)
 
-        # Wait for keyboard input to close plot window.
-        readline()
+        
+        #Render the Animation object into a GIF object
+        if (typeof(plot) == Animation)
+            gif(plot, filename)
+            println("Saved plot to $filename.")
+        else
+
+            # Open a new window to display the plot.
+            display(plot)
+
+            # Wait for keyboard input to close plot window.
+            readline()
+
+        end
+
     else
-        # Save plot to an image file.
-        savefig(filename)
-
+        if (typeof(plot) == Animation)
+            gif(plot, filename)
+        else
+            # Save plot to an image file.
+            savefig(filename)
+        end
         # Notify the current user that plot has been saved.
         println("Saved plot to $filename.")
 

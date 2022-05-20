@@ -77,13 +77,15 @@ end;
 - 'xs,observations::DynamicChoiceMap' - contstraints on the model. Forces the output to equal the real messurements
 - 'updateTrace::Function' - A function oh how to MCMC chunk update the code
 - 'NumFrame::Int64' - The number of frames to render
-- 'RetEnd' - used to return the animation object instead of the gif
 """
-function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64; RetEnd::Bool=false)
+function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64)
     t, = generate(GenFunction, (xs,), observations)#Create initial set of parameters to iterate on
+    
+    
     viz = @animate for i in 1:NumFrame
         t = updateTrace(t)
         visualize_trace(serialize_trace(t); title="Iteration $i/$NumFrame")
     end;
-    return(gif(viz))
+    
+    return viz
 end
