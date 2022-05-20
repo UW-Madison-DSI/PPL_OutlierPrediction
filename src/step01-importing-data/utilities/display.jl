@@ -27,7 +27,11 @@ function show(plot, filename)
         readline()
     else
         if (typeof(plot) == "Animation")
-            gif(plot, filename)
+            
+            for f in frame(plot)
+                SavePNG = f
+            end
+            png(SavePNG, filename)
             println("Saved plot to $filename.")
         else
             # Save plot to an image file.
