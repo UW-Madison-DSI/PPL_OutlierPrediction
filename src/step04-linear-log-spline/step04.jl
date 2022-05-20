@@ -177,8 +177,8 @@ end;
 
 
 # Main
-show(VizGenModel(Log_Linear_Spline_with_outliers),"step04_test.png")
+show(VizGenModel(Log_Linear_Spline_with_outliers),"step04.png")
 
 # Shows a gif of the MCMC working on the Waste Water data.
 observations = make_constraints(log.(ys));
-show(VizGenMCMC(Log_Linear_Spline_with_outliers, xs, observations, block_resimulation_update, 100),"step05.gif")
+show(VizGenMCMC(Log_Linear_Spline_with_outliers, xs, observations, block_resimulation_update, 100),"step04.gif")
