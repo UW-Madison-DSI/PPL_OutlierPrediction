@@ -23,7 +23,7 @@ function visualize_trace(trace::Dict; title::String="")
     #Graph points
     outliers = [pt for (pt, outlier) in zip(trace[:points], trace[:outliers]) if outlier]
     inliers =  [pt for (pt, outlier) in zip(trace[:points], trace[:outliers]) if !outlier]
-    scatter(map(first, inliers), map(last, inliers), markercolor="blue", label=nothing) 
+    scatter(map(first, inliers), map(last, inliers), markercolor="blue", title ="Regular", label=nothing) 
     scatter!(map(first, outliers), map(last, outliers), markercolor="red", label=nothing)
 
     #Graph Line
@@ -31,7 +31,7 @@ function visualize_trace(trace::Dict; title::String="")
 
 
     #LogPlot
-    scatter(map(first, inliers), log_modulus.(map(last, inliers)), markercolor="blue", label=nothing) 
+    scatter(map(first, inliers), log_modulus.(map(last, inliers)), markercolor="blue", title ="Log", label=nothing) 
     scatter!(map(first, outliers), log_modulus.(map(last, outliers)), markercolor="red", label=nothing)
     ExpPLT = plot!(trace[:xs], log_modulus.(trace[:ys]), color = "black", lw = 3, label = nothing)
     
@@ -77,17 +77,15 @@ end;
 - 'xs,observations::DynamicChoiceMap' - contstraints on the model. Forces the output to equal the real messurements
 - 'updateTrace::Function' - A function oh how to MCMC chunk update the code
 - 'NumFrame::Int64' - The number of frames to render
-- 'RetAni' - used to return the animation object instead of the gif
 """
-function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64; RetAni::Bool=false)
+function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64)
     t, = generate(GenFunction, (xs,), observations)#Create initial set of parameters to iterate on
+    
+    
     viz = @animate for i in 1:NumFrame
         t = updateTrace(t)
         visualize_trace(serialize_trace(t); title="Iteration $i/$NumFrame")
     end;
-    if(RetAni)
-        return(viz)
-    else
-        return(gif(viz))
-    end
+    
+    return viz
 end
