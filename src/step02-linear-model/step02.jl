@@ -163,25 +163,19 @@ end;
 - 'GenFunction::DynamicDSLFunction' - @Gen model function with random parameters.
 - 'xs,observations::DynamicChoiceMap' - constraints on the model. Forces the output to equal the real measurements.
 - 'updateTrace::Function' - A function oh how to MCMC chunk update the code.
-- 'NumFrame::Int64' - The number of frames to render.
-- 'RetAni' - used to return the animation object instead of the gif.
+- 'NumFrame::Int64' - The number of frames to render
 """
-function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64; RetAni::Bool=false)
+function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64)
     t, = generate(GenFunction, (xs,), observations)#Create initial set of parameters to iterate on
+    
+    
     viz = @animate for i in 1:NumFrame
         t = updateTrace(t)
         visualize_trace(serialize_trace(t); title="Iteration $i/$NumFrame")
     end;
-
-    if (RetAni)
-        return(viz)
-    else
-        return(gif(viz))
-    end
+    
+    return viz
 end
 
-
-# Main
-show(VizGenModel(Linear_regression_with_outliers),"step02.png")
 observations = make_constraints(ys);
-show(VizGenMCMC(Linear_regression_with_outliers, xs, observations,block_resimulation_update,100,RetAni=true),"step02.gif")
+show(VizGenMCMC(Linear_regression_with_outliers, xs, observations,block_resimulation_update,100),"step02.gif")

@@ -169,11 +169,9 @@ end;
 
 # Main
 
-# Visualize the spline model that we have created.
-show(VizGenModel(Linear_Spline_with_outliers),"step03.png")
 
 # Constrain the model so the output in the wastewater output.
 observations = make_constraints(ys);
 
 # Shows a gif of the MCMC working on the Waste Water data.
-show(VizGenMCMC(Linear_Spline_with_outliers, xs, observations,block_resimulation_update,300,RetAni=true),"step03.gif")
+show(VizGenMCMC(Linear_Spline_with_outliers, xs, observations,block_resimulation_update,300),"step03.gif")
