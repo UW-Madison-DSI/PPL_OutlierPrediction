@@ -35,9 +35,13 @@ juliaStatus=$?
 ## missing:  validate that toml env is consistent with squid tarball;
 ## julia script to update or check the env??
 
-## copy image file to top level dir so that it will be transferred
+## copy image file(s) to top level dir so that they will be transferred
 ##  rename with job ID to prevent clobbering 
-cp $step*.png $HOME/$step.$CLUSTER.$PROCESS.png  
+[[ -f $step.png ]] && \
+    cp $step*.png $HOME/$step.$CLUSTER.$PROCESS.png  
+
+[[ -f $step.gif ]] && \
+    cp $step*.gif $HOME/$step.$CLUSTER.$PROCESS.gif  
 
 ##################
 # exit with return code of julia execution.
