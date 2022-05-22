@@ -78,13 +78,15 @@ end;
 - 'updateTrace::Function' - A function oh how to MCMC chunk update the code
 - 'NumFrame::Int64' - The number of frames to render
 """
-function VizGenMCMC(GenFunction::DynamicDSLFunction,xs,observations::DynamicChoiceMap,updateTrace::Function, NumFrame::Int64)
-    t, = generate(GenFunction, (xs,), observations)#Create initial set of parameters to iterate on
+function VizGenMCMC(GenFunction::DynamicDSLFunction, xs, observations::DynamicChoiceMap, updateTrace::Function, NumFrame::Int64)
+
+
+    tr, = generate(GenFunction, (xs,), observations)#Create initial set of parameters to iterate on
     
     
     viz = @animate for i in 1:NumFrame
-        t = updateTrace(t)
-        visualize_trace(serialize_trace(t); title="Iteration $i/$NumFrame")
+        tr = updateTrace(tr)
+        visualize_trace(serialize_trace(tr); title="Iteration $i/$NumFrame")
     end;
     
     return viz
