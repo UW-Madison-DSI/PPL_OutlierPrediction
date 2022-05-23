@@ -97,7 +97,7 @@ git clone https://github.com/AFIDSI/PPL_OutlierPrediction.git
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-The project examples are provided in two different forms (1) as Julia script files that may be exectued  from the command line and (2) as Jupyter notebook files that may be viewed in a Jupyter editor.
+The project examples are provided in two different forms (1) as Julia script files that may be executed  from the command line and (2) as Jupyter notebook files that may be viewed in a Jupyter editor.
 
 1. Go to the desired project step
 ```sh
