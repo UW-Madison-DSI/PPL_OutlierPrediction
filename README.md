@@ -128,7 +128,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Steve Goldstein - (mailto:sgoldstein@wisc.edu) - email
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/AFIDSI/PPL_OutlierPrediction](https://github.com/AFIDSI/PPL_OutlierPrediction)
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
